@@ -1,0 +1,282 @@
+.card {
+  position: relative;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(8, 14, 30, 0.8) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: clamp(16px, 2vw, 22px) clamp(12px, 1.5vw, 18px) clamp(14px, 1.8vw, 20px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: fadeInUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) both;
+  animation-delay: var(--delay, 0ms);
+  overflow: hidden;
+  transform-style: preserve-3d;
+  perspective: 800px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.06), transparent 50%);
+  pointer-events: none;
+  transition: opacity var(--transition-normal);
+}
+
+.card::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 21px;
+  background: linear-gradient(135deg, var(--type-color, transparent), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: -1;
+  filter: blur(1px);
+}
+
+.card:hover {
+  transform: translateY(-12px) rotateX(3deg) rotateY(-2deg) scale(1.02);
+  border-color: var(--type-color);
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.35),
+    0 0 30px var(--type-glow),
+    0 0 60px var(--type-glow),
+    inset 0 1px 0 rgba(255,255,255,0.1);
+}
+
+.card:hover::before {
+  opacity: 0;
+}
+
+.card:hover::after {
+  opacity: 0.15;
+}
+
+.card:hover .sprite {
+  transform: scale(1.15) translateY(-5px);
+  filter: drop-shadow(0 8px 20px var(--type-glow)) drop-shadow(0 0 30px var(--type-glow));
+}
+
+.card:active {
+  transform: translateY(-4px) scale(0.98);
+  transition-duration: 0.1s;
+}
+
+/* ── Actions ──────────────────────────── */
+.actions {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  z-index: 2;
+}
+
+.favBtn,
+.catchBtn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  color: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.favBtn:hover {
+  color: var(--neon-red);
+  background: rgba(255, 56, 96, 0.2);
+  border-color: rgba(255, 56, 96, 0.4);
+  transform: scale(1.2);
+}
+
+.favBtn.favorited {
+  color: var(--neon-red);
+  background: rgba(255, 56, 96, 0.25);
+  border-color: rgba(255, 56, 96, 0.5);
+  animation: heartBeat 0.6s ease;
+  text-shadow: 0 0 10px rgba(255, 56, 96, 0.7);
+  box-shadow: 0 0 15px rgba(255, 56, 96, 0.3);
+}
+
+.catchBtn {
+  font-size: 0.7rem;
+}
+
+.catchBtn:hover {
+  color: var(--neon-cyan);
+  background: rgba(0, 212, 255, 0.2);
+  border-color: rgba(0, 212, 255, 0.4);
+  transform: scale(1.2);
+}
+
+.catchBtn.caught {
+  color: var(--neon-red);
+  background: rgba(255, 56, 96, 0.25);
+  border-color: rgba(255, 56, 96, 0.5);
+  text-shadow: 0 0 8px var(--neon-red);
+  box-shadow: 0 0 12px rgba(255, 56, 96, 0.3);
+}
+
+/* ── Caught overlay ───────────────────── */
+.caughtOverlay {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 2;
+}
+
+.caughtBall {
+  font-size: 1.2rem;
+  color: var(--neon-red);
+  filter: drop-shadow(0 0 8px var(--neon-red));
+  opacity: 0.8;
+}
+
+/* ── Pokemon ID ───────────────────────── */
+.pokeId {
+  font-family: var(--font-display);
+  font-size: clamp(0.58rem, 0.8vw, 0.68rem);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: rgba(255, 255, 255, 0.4);
+  align-self: flex-start;
+  margin-left: 4px;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+/* ── Sprite ────────────────────────────── */
+.spriteWrap {
+  width: clamp(90px, 12vw, 120px);
+  height: clamp(90px, 12vw, 120px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 4px 0;
+}
+
+.sprite {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.35));
+}
+
+/* ── Name ──────────────────────────────── */
+.name {
+  font-family: var(--font-display);
+  font-size: clamp(0.72rem, 1vw, 0.88rem);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: capitalize;
+  color: #fff;
+  text-align: center;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+/* ── Type Badges ──────────────────────── */
+.types {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 4px;
+}
+
+.typeBadge {
+  font-family: var(--font-display);
+  font-size: clamp(0.5rem, 0.7vw, 0.58rem);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 14px;
+  color: var(--badge-color);
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--badge-color, rgba(255, 255, 255, 0.2));
+  text-shadow: 0 0 8px var(--badge-glow, transparent);
+  transition: all var(--transition-fast);
+}
+
+.card:hover .typeBadge {
+  border-color: var(--badge-color);
+  box-shadow: 0 0 12px var(--badge-glow), 0 0 24px var(--badge-glow);
+  background: rgba(0, 0, 0, 0.6);
+}
+
+/* ── Responsive ───────────────────────── */
+@media (max-width: 768px) {
+  .card {
+    border-radius: 16px;
+    padding: 14px 10px 12px;
+  }
+
+  .favBtn, .catchBtn {
+    width: 28px;
+    height: 28px;
+    font-size: 0.85rem;
+  }
+
+  .spriteWrap {
+    width: 90px;
+    height: 90px;
+  }
+}
+
+@media (max-width: 480px) {
+  .card {
+    border-radius: 14px;
+    padding: 10px 8px 10px;
+    gap: 4px;
+  }
+
+  .spriteWrap {
+    width: clamp(75px, 22vw, 90px);
+    height: clamp(75px, 22vw, 90px);
+    margin: 2px 0;
+  }
+
+  .name {
+    font-size: 0.74rem;
+    letter-spacing: 0.04em;
+  }
+
+  .pokeId {
+    font-size: 0.58rem;
+    margin-left: 2px;
+  }
+
+  .typeBadge {
+    font-size: 0.5rem;
+    padding: 3px 8px;
+    border-radius: 10px;
+  }
+
+  .actions {
+    top: 6px;
+    right: 6px;
+    gap: 4px;
+  }
+
+  .favBtn, .catchBtn {
+    width: 26px;
+    height: 26px;
+    font-size: 0.78rem;
+  }
+}
+

@@ -1,0 +1,468 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  animation: fadeIn 0.2s ease;
+}
+
+.modal {
+  position: relative;
+  width: 100%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: rgba(10, 14, 28, 0.95);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  animation: scaleIn 0.3s ease;
+  scrollbar-width: thin;
+}
+
+.modal::-webkit-scrollbar {
+  width: 4px;
+}
+
+.modal::-webkit-scrollbar-thumb {
+  background: rgba(255, 56, 96, 0.2);
+  border-radius: 2px;
+}
+
+.closeBtn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 10;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--glass-border);
+  transition: all var(--transition-fast);
+}
+
+.closeBtn:hover {
+  color: var(--neon-red);
+  border-color: rgba(255, 56, 96, 0.3);
+  background: rgba(255, 56, 96, 0.1);
+}
+
+.loadingWrap {
+  padding: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Content Layout ───────────────────── */
+.content {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 0;
+}
+
+/* ── Artwork Panel ────────────────────── */
+.artworkPanel {
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  border-right: 1px solid var(--glass-border);
+}
+
+.artworkBg {
+  width: 200px;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px;
+  position: relative;
+}
+
+.artwork {
+  width: 180px;
+  height: 180px;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.4));
+  animation: fadeIn 0.4s ease 0.1s both;
+}
+
+.idBadge {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+
+.modalActions {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+.actionBtn {
+  flex: 1;
+  font-family: var(--font-display);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--glass-border);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-secondary);
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.actionBtn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--glass-border-hover);
+}
+
+.actionBtn.favActive {
+  color: var(--neon-red);
+  border-color: rgba(255, 56, 96, 0.3);
+  background: rgba(255, 56, 96, 0.08);
+}
+
+.actionBtn.caughtActive {
+  color: var(--neon-cyan);
+  border-color: rgba(0, 212, 255, 0.3);
+  background: rgba(0, 212, 255, 0.08);
+}
+
+/* ── Details Panel ────────────────────── */
+.detailsPanel {
+  padding: 32px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.pokeName {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: capitalize;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.genus {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-top: -8px;
+}
+
+/* ── Type Badges ──────────────────────── */
+.typeBadges {
+  display: flex;
+  gap: 8px;
+}
+
+.typeBadge {
+  font-family: var(--font-display);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 5px 14px;
+  border-radius: 14px;
+  color: var(--badge-color);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--badge-color);
+  box-shadow: 0 0 10px var(--badge-glow);
+}
+
+/* ── Physical Stats ───────────────────── */
+.physicalStats {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--glass-border);
+}
+
+.physStat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  flex: 1;
+}
+
+.physLabel {
+  font-family: var(--font-display);
+  font-size: 0.55rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.physValue {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.physDivider {
+  width: 1px;
+  height: 28px;
+  background: var(--glass-border);
+}
+
+/* ── Flavor Text ──────────────────────── */
+.flavorText {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  font-style: italic;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border-left: 2px solid var(--modal-type-color, var(--neon-red));
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* ── Base Stats ───────────────────────── */
+.statsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sectionTitle {
+  font-family: var(--font-display);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.statsGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.statRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.statLabel {
+  font-family: var(--font-display);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
+  width: 48px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.statBarTrack {
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+}
+
+.statBarFill {
+  height: 100%;
+  border-radius: 3px;
+  background: var(--stat-color, var(--neon-cyan));
+  width: var(--fill-width, 0%);
+  animation: fillBar 0.8s ease 0.3s both;
+  box-shadow: 0 0 8px var(--stat-color, var(--neon-cyan));
+}
+
+.statValue {
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  width: 32px;
+  flex-shrink: 0;
+}
+
+.totalStat {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-top: 8px;
+  border-top: 1px solid var(--glass-border);
+}
+
+.totalStat .statLabel {
+  color: var(--neon-cyan);
+}
+
+.totalStat .statValue {
+  color: var(--neon-cyan);
+  font-size: 0.8rem;
+  text-shadow: 0 0 8px rgba(0, 212, 255, 0.4);
+}
+
+/* ── Abilities ────────────────────────── */
+.abilitiesSection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.abilitiesList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.abilityChip {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 5px 14px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--glass-border);
+  color: var(--text-secondary);
+  text-transform: capitalize;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hiddenAbility {
+  border-style: dashed;
+}
+
+.hiddenTag {
+  font-family: var(--font-display);
+  font-size: 0.5rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--neon-purple);
+  text-transform: uppercase;
+}
+
+/* ── Responsive ───────────────────────── */
+@media (max-width: 700px) {
+  .content {
+    grid-template-columns: 1fr;
+  }
+
+  .artworkPanel {
+    border-right: none;
+    border-bottom: 1px solid var(--glass-border);
+    padding: 24px 24px 20px;
+  }
+
+  .artworkBg {
+    width: 160px;
+    height: 160px;
+  }
+
+  .artwork {
+    width: 140px;
+    height: 140px;
+  }
+
+  .detailsPanel {
+    padding: 20px 24px 28px;
+  }
+
+  .pokeName {
+    font-size: 1.3rem;
+  }
+
+  .physicalStats {
+    gap: 12px;
+    padding: 10px 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .overlay {
+    padding: 10px;
+    padding-top: max(env(safe-area-inset-top, 0px), 12px);
+    padding-bottom: max(env(safe-area-inset-bottom, 0px), 12px);
+  }
+
+  .modal {
+    border-radius: 20px;
+    max-height: 92vh;
+    max-height: 92dvh;
+  }
+
+  .artworkPanel {
+    padding: 16px 16px 14px;
+    gap: 10px;
+  }
+
+  .artworkBg {
+    width: 130px;
+    height: 130px;
+  }
+
+  .artwork {
+    width: 115px;
+    height: 115px;
+  }
+
+  .detailsPanel {
+    padding: 14px 16px 20px;
+    gap: 12px;
+  }
+
+  .pokeName {
+    font-size: 1.25rem;
+  }
+
+  .closeBtn {
+    top: 10px;
+    right: 10px;
+    width: 32px;
+    height: 32px;
+  }
+
+  .statRow {
+    gap: 6px;
+  }
+
+  .statLabel {
+    width: 40px;
+    font-size: 0.55rem;
+  }
+}
+

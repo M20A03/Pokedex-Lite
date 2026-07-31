@@ -1,0 +1,66 @@
+.wrapper {
+  width: 100%;
+  max-width: 1400px;
+  min-width: 0; /* Fixes flexbox child blowout */
+  margin: 0 auto;
+  padding: 0 clamp(14px, 3vw, 24px);
+  position: relative;
+  box-sizing: border-box;
+}
+
+.scrollContainer {
+  display: flex;
+  gap: clamp(6px, 1vw, 10px);
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 4px 0 12px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.scrollContainer::-webkit-scrollbar {
+  display: none;
+}
+
+.pill {
+  flex-shrink: 0;
+  font-family: var(--font-display);
+  font-size: clamp(0.55rem, 0.8vw, 0.65rem);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: clamp(6px, 0.8vw, 8px) clamp(10px, 1.2vw, 16px);
+  border-radius: 20px;
+  color: var(--pill-color, rgba(255, 255, 255, 0.85));
+  background: rgba(8, 16, 36, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  transition: all var(--transition-normal);
+  cursor: pointer;
+  white-space: nowrap;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+}
+
+.pill:hover {
+  background: rgba(8, 16, 36, 0.7);
+  border-color: var(--pill-color, rgba(255, 255, 255, 0.3));
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25), 0 0 12px var(--pill-glow, transparent);
+}
+
+.pill.active {
+  background: rgba(8, 16, 36, 0.75);
+  border-color: var(--pill-color);
+  color: var(--pill-color);
+  box-shadow: 0 0 16px var(--pill-glow, transparent), 0 0 30px var(--pill-glow, transparent), inset 0 0 10px rgba(255, 255, 255, 0.03);
+  transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+  .scrollContainer {
+    gap: 6px;
+  }
+}

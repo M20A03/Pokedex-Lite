@@ -1,0 +1,285 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(8, 16, 36, 0.75);
+  backdrop-filter: blur(30px) saturate(1.5);
+  -webkit-backdrop-filter: blur(30px) saturate(1.5);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+  /* safe area for notched phones */
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+}
+
+.inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 clamp(14px, 3vw, 32px);
+  height: var(--header-height);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(8px, 2vw, 20px);
+}
+
+/* ── Logo ──────────────────────────────── */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: clamp(8px, 1.5vw, 12px);
+  flex-shrink: 0;
+}
+
+.logoIcon {
+  font-size: clamp(1.2rem, 2vw, 1.6rem);
+  color: var(--neon-red);
+  animation: glowPulse 3s ease-in-out infinite;
+  display: flex;
+  align-items: center;
+}
+
+.logoText {
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 2vw, 1.5rem);
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: #fff;
+  white-space: nowrap;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 255, 255, 0.1);
+}
+
+.logoHighlight {
+  color: var(--neon-red);
+  text-shadow: 0 0 14px rgba(255, 56, 96, 0.8), 0 0 40px rgba(255, 56, 96, 0.4), 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+/* ── Navigation ───────────────────────── */
+.nav {
+  display: flex;
+  align-items: center;
+  gap: clamp(4px, 1vw, 8px);
+}
+
+.navBtn {
+  font-family: var(--font-display);
+  font-size: clamp(0.7rem, 1vw, 0.9rem);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: clamp(8px, 1.2vw, 12px) clamp(14px, 2vw, 24px);
+  border-radius: 12px;
+  color: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  transition: all var(--transition-normal);
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+}
+
+.navBtn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.navBtn.active {
+  color: #fff;
+  background: rgba(255, 56, 96, 0.3);
+  border-color: rgba(255, 56, 96, 0.6);
+  box-shadow: 0 0 20px rgba(255, 56, 96, 0.25), inset 0 0 15px rgba(255, 56, 96, 0.1);
+}
+
+.navIcon {
+  font-size: 1.1rem;
+}
+
+.heartIcon {
+  font-size: 1.1rem;
+  color: var(--neon-red);
+  filter: drop-shadow(0 0 5px rgba(255, 56, 96, 0.6));
+}
+
+.badge {
+  font-family: var(--font-display);
+  font-size: 0.65rem;
+  font-weight: 700;
+  background: var(--neon-red);
+  color: #fff;
+  padding: 3px 8px;
+  border-radius: 12px;
+  min-width: 20px;
+  text-align: center;
+  line-height: 1.4;
+  box-shadow: 0 0 12px rgba(255, 56, 96, 0.5);
+}
+
+/* ── Stats group ──────────────────────── */
+.statsGroup {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: 8px;
+  padding-left: 16px;
+  border-left: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.statChip {
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.85);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.pokeball {
+  color: var(--neon-red);
+  font-size: 0.85rem;
+  filter: drop-shadow(0 0 4px rgba(255, 56, 96, 0.4));
+}
+
+/* ── Theme Toggle ─────────────────────── */
+.themeToggle {
+  font-size: 1.4rem;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  transition: all var(--transition-normal);
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.themeToggle:hover {
+  color: var(--neon-yellow);
+  background: rgba(255, 217, 0, 0.12);
+  border-color: rgba(255, 217, 0, 0.3);
+  transform: rotate(15deg);
+}
+
+/* ── Scanline sweep effect ────────────── */
+.scanline {
+  position: absolute;
+  top: -10%;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 56, 96, 0.6) 50%, transparent 100%);
+  opacity: 0.7;
+  animation: scanline 2s ease-out forwards;
+  pointer-events: none;
+}
+
+.googleLoginBtn {
+  font-family: var(--font-display);
+  font-size: clamp(0.7rem, 1vw, 0.85rem);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: clamp(6px, 1vw, 10px) clamp(10px, 1.5vw, 16px);
+  border-radius: 12px;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all var(--transition-normal);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.googleLoginBtn:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.35);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.googleIcon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+/* ── Responsive: Tablet ───────────────── */
+@media (max-width: 768px) {
+  .header {
+    --header-height: 58px;
+  }
+
+  .inner {
+    gap: 8px;
+  }
+
+  .statsGroup {
+    display: none;
+  }
+}
+
+/* ── Responsive: Mobile ───────────────── */
+@media (max-width: 480px) {
+  .header {
+    --header-height: 52px;
+  }
+
+  .inner {
+    padding: 0 10px;
+    gap: 4px;
+  }
+
+  .logoText {
+    font-size: 0.82rem;
+    letter-spacing: 0.04em;
+  }
+
+  .navBtn {
+    padding: 6px 8px;
+    gap: 3px;
+    font-size: 0.68rem;
+  }
+
+  .googleLoginBtn {
+    padding: 6px 8px;
+    font-size: 0.68rem;
+    gap: 4px;
+  }
+
+  .navIcon, .heartIcon {
+    display: none;
+  }
+
+  .themeToggle {
+    width: 32px;
+    height: 32px;
+    font-size: 0.95rem;
+    flex-shrink: 0;
+  }
+}
+
+@media (max-width: 360px) {
+  .logoText {
+    display: none;
+  }
+
+  .navBtn {
+    padding: 6px 6px;
+    font-size: 0.65rem;
+  }
+}
+
