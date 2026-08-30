@@ -10,72 +10,66 @@ const errorStyles = {
     animation: 'fadeIn 0.4s ease',
   },
   code: {
-    fontFamily: 'var(--font-display)',
-    fontSize: '2.5rem',
+    fontFamily: 'var(--font-display, sans-serif)',
+    fontSize: 'clamp(1.8rem, 4vw, 2.5rem)',
     fontWeight: 900,
     letterSpacing: '0.1em',
-    color: 'var(--neon-red)',
-    textShadow: '0 0 20px rgba(255, 56, 96, 0.4), 0 0 40px rgba(255, 56, 96, 0.2)',
-    animation: 'glitch 0.3s ease-in-out infinite alternate',
+    color: 'var(--color-brand-primary, #ff3860)',
+    textShadow: '0 0 20px rgba(255, 56, 96, 0.4)',
   },
   message: {
-    fontFamily: 'var(--font-display)',
-    fontSize: '0.75rem',
-    fontWeight: 600,
-    letterSpacing: '0.12em',
-    color: 'var(--text-secondary)',
-    maxWidth: '400px',
+    fontFamily: 'var(--font-body, sans-serif)',
+    fontSize: 'clamp(0.85rem, 1.2vw, 0.95rem)',
+    fontWeight: 500,
+    color: 'var(--text-secondary, rgba(255, 255, 255, 0.8))',
+    maxWidth: '440px',
     lineHeight: 1.6,
   },
   retryBtn: {
-    fontFamily: 'var(--font-display)',
-    fontSize: '0.65rem',
+    fontFamily: 'var(--font-display, sans-serif)',
+    fontSize: '0.75rem',
     fontWeight: 700,
     letterSpacing: '0.1em',
-    padding: '10px 28px',
+    padding: '12px 28px',
     borderRadius: '12px',
-    border: '1px solid rgba(255, 56, 96, 0.3)',
-    background: 'rgba(255, 56, 96, 0.08)',
-    color: 'var(--neon-red)',
+    border: '1px solid rgba(255, 56, 96, 0.4)',
+    background: 'rgba(255, 56, 96, 0.12)',
+    color: 'var(--color-brand-primary, #ff3860)',
     cursor: 'pointer',
     transition: 'all 0.2s ease',
     marginTop: '8px',
+    minHeight: '44px',
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   ghost: {
     fontSize: '3rem',
-    opacity: 0.15,
-    filter: 'blur(1px)',
+    opacity: 0.3,
   },
   emptyIcon: {
     fontSize: '2.5rem',
-    opacity: 0.2,
+    opacity: 0.3,
   },
 };
 
 export default function ErrorState({ message, onRetry, isEmpty = false }) {
   if (isEmpty) {
     return (
-      <div style={errorStyles.wrapper} id="empty-state">
-        <div style={errorStyles.emptyIcon}>🔍</div>
+      <div style={errorStyles.wrapper} id="empty-state" role="status">
+        <div style={errorStyles.emptyIcon} aria-hidden="true">🔍</div>
         <div style={errorStyles.code}>NO RESULTS</div>
         <p style={errorStyles.message}>
-          {message || "We couldn't find any Pokémon matching your search. Try a different name or ID."}
+          {message || "We couldn't find any Pokémon matching your search. Try adjusting your query or filters."}
         </p>
         {onRetry && (
           <button
             style={errorStyles.retryBtn}
             onClick={onRetry}
-            onMouseOver={(e) => {
-              e.target.style.background = 'rgba(255, 56, 96, 0.15)';
-              e.target.style.boxShadow = '0 0 16px rgba(255, 56, 96, 0.2)';
-            }}
-            onMouseOut={(e) => {
-              e.target.style.background = 'rgba(255, 56, 96, 0.08)';
-              e.target.style.boxShadow = 'none';
-            }}
             id="retry-button"
+            type="button"
           >
-            CLEAR SEARCH
+            RESET SEARCH / FILTERS
           </button>
         )}
       </div>
@@ -83,27 +77,20 @@ export default function ErrorState({ message, onRetry, isEmpty = false }) {
   }
 
   return (
-    <div style={errorStyles.wrapper} id="error-state">
-      <div style={errorStyles.ghost}>👻</div>
-      <div style={errorStyles.code}>ERROR 404</div>
+    <div style={errorStyles.wrapper} id="error-state" role="alert">
+      <div style={errorStyles.ghost} aria-hidden="true">⚠️</div>
+      <div style={errorStyles.code}>GATEWAY ANOMALY</div>
       <p style={errorStyles.message}>
-        {message || 'Something went wrong while fetching Pokémon data. The servers might be having a nap.'}
+        {message || 'Unable to establish link with Pokémon database servers.'}
       </p>
       {onRetry && (
         <button
           style={errorStyles.retryBtn}
           onClick={onRetry}
-          onMouseOver={(e) => {
-            e.target.style.background = 'rgba(255, 56, 96, 0.15)';
-            e.target.style.boxShadow = '0 0 16px rgba(255, 56, 96, 0.2)';
-          }}
-          onMouseOut={(e) => {
-            e.target.style.background = 'rgba(255, 56, 96, 0.08)';
-            e.target.style.boxShadow = 'none';
-          }}
           id="retry-button"
+          type="button"
         >
-          RETRY
+          RETRY CONNECTION
         </button>
       )}
     </div>

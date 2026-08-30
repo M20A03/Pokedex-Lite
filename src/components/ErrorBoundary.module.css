@@ -1,0 +1,111 @@
+.container {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(16px, 4vw, 32px);
+  background: radial-gradient(circle at center, #15000b 0%, #050810 100%);
+  color: #fff;
+  font-family: var(--font-body, sans-serif);
+}
+
+.panel {
+  max-width: 580px;
+  width: 100%;
+  padding: clamp(24px, 5vw, 40px);
+  border-radius: 20px;
+  background: rgba(15, 8, 20, 0.85);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border: 1px solid rgba(255, 56, 96, 0.4);
+  box-shadow: 0 0 50px rgba(255, 56, 96, 0.25), 0 20px 40px rgba(0, 0, 0, 0.7);
+  text-align: center;
+}
+
+.glitchIcon {
+  font-size: 3rem;
+  margin-bottom: 12px;
+  filter: drop-shadow(0 0 15px rgba(255, 56, 96, 0.8));
+}
+
+.title {
+  font-family: var(--font-display, sans-serif);
+  font-size: clamp(1.1rem, 3vw, 1.4rem);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--color-brand-primary, #ff3860);
+  margin-bottom: 10px;
+  text-shadow: 0 0 15px rgba(255, 56, 96, 0.5);
+}
+
+.subtitle {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.75);
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.errorBox {
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 28px;
+  text-align: left;
+  overflow-x: auto;
+}
+
+.errorBox code {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.82rem;
+  color: #ff88a3;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.primaryBtn,
+.secondaryBtn {
+  font-family: var(--font-display, sans-serif);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 12px 24px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: var(--min-touch-target, 44px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.primaryBtn {
+  background: var(--color-brand-primary, #ff3860);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 20px rgba(255, 56, 96, 0.4);
+}
+
+.primaryBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 30px rgba(255, 56, 96, 0.7);
+}
+
+.secondaryBtn {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.secondaryBtn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}

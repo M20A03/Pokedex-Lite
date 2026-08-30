@@ -2,17 +2,36 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: clamp(14px, 2vw, 22px);
-  max-width: 1400px;
+  max-width: var(--container-xl, 1280px);
   margin: 0 auto;
-  padding: 0 clamp(14px, 3vw, 24px);
+  padding: 0 clamp(12px, 3vw, 24px);
+  width: 100%;
 }
 
-@media (max-width: 1200px) {
+/* 4K / Ultrawide Workstation Displays */
+@media (min-width: 1920px) {
+  .grid {
+    grid-template-columns: repeat(5, 1fr);
+    max-width: var(--container-2xl, 1536px);
+  }
+}
+
+/* Standard 13-inch / 14-inch Laptops (1024px - 1366px) */
+@media (max-width: 1280px) {
   .grid {
     grid-template-columns: repeat(3, 1fr);
   }
 }
 
+/* Tablets (768px - 1024px) */
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+}
+
+/* Large Mobile (480px - 768px) */
 @media (max-width: 768px) {
   .grid {
     grid-template-columns: repeat(2, 1fr);
@@ -21,21 +40,20 @@
   }
 }
 
+/* Small Mobile (380px - 480px) */
 @media (max-width: 480px) {
   .grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
-    padding: 0 10px;
-    width: 100%;
-    max-width: 100%;
+    padding: 0 12px;
   }
 }
 
-@media (max-width: 330px) {
+/* Extra Small Phones (<380px) */
+@media (max-width: 380px) {
   .grid {
     grid-template-columns: 1fr;
     gap: 10px;
     padding: 0 12px;
   }
 }
-

@@ -6,7 +6,7 @@ export default function Pagination({ page, totalPages, totalCount, itemsPerPage,
   const start = (page - 1) * itemsPerPage + 1;
   const end = Math.min(page * itemsPerPage, totalCount);
 
-  // Build page numbers to show
+  // Build visible page numbers
   const getVisiblePages = () => {
     const pages = [];
     const maxVisible = 5;
@@ -35,30 +35,33 @@ export default function Pagination({ page, totalPages, totalCount, itemsPerPage,
   };
 
   return (
-    <div className={styles.wrapper}>
-      <span className={styles.info}>
-        Showing {start}–{end} of {totalCount.toLocaleString()}
+    <nav className={styles.wrapper} aria-label="Pokédex Pagination Navigation">
+      <span className={styles.info} aria-live="polite">
+        Showing {start}–{end} of {totalCount.toLocaleString()} Pokémon
       </span>
 
-      <div className={styles.controls}>
+      <div className={styles.controls} role="group" aria-label="Page navigation controls">
         <button
           className={`${styles.btn} ${styles.navBtn}`}
           disabled={page <= 1}
           onClick={() => onPageChange(page - 1)}
           id="pagination-prev"
+          aria-label="Go to previous page"
         >
           ‹ PREV
         </button>
 
         {getVisiblePages().map((p, i) =>
           p === '...' ? (
-            <span key={`dots-${i}`} className={styles.dots}>···</span>
+            <span key={`dots-${i}`} className={styles.dots} aria-hidden="true">···</span>
           ) : (
             <button
               key={p}
               className={`${styles.btn} ${styles.pageBtn} ${p === page ? styles.active : ''}`}
               onClick={() => onPageChange(p)}
               id={`pagination-page-${p}`}
+              aria-label={`Go to page ${p}`}
+              aria-current={p === page ? 'page' : undefined}
             >
               {p}
             </button>
@@ -70,10 +73,11 @@ export default function Pagination({ page, totalPages, totalCount, itemsPerPage,
           disabled={page >= totalPages}
           onClick={() => onPageChange(page + 1)}
           id="pagination-next"
+          aria-label="Go to next page"
         >
           NEXT ›
         </button>
       </div>
-    </div>
+    </nav>
   );
 }

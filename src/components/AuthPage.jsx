@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useKeyboardShortcut } from '../hooks/useKeyboardShortcut';
 import styles from './AuthPage.module.css';
 
 export default function AuthPage({ onClose }) {
@@ -7,7 +8,13 @@ export default function AuthPage({ onClose }) {
   const [loading, setLoading] = useState(false);
   const { loginWithGoogle } = useAuth();
 
+  // Escape key closes auth modal
+  useKeyboardShortcut('Escape', () => {
+    if (onClose && !loading) onClose();
+  }, { ignoreInputs: false });
+
   async function handleGoogleLogin() {
+    if (loading) return; // Prevent double-submit
     setError('');
     setLoading(true);
     try {
@@ -15,7 +22,13 @@ export default function AuthPage({ onClose }) {
       if (onClose) onClose();
     } catch (err) {
       if (err.code !== 'auth/popup-closed-by-user') {
-        setError(err.message.replace('Firebase: ', ''));
+        const readableMsg =
+          err.code === 'auth/network-request-failed'
+            ? 'Network error. Please check your internet connection.'
+            : err.code === 'auth/unauthorized-domain'
+            ? 'Domain authorization issue. Please verify Firebase settings.'
+            : err.message.replace('Firebase: ', '');
+        setError(readableMsg);
       }
     } finally {
       setLoading(false);
@@ -23,13 +36,24 @@ export default function AuthPage({ onClose }) {
   }
 
   return (
-    <div className={styles.container}>
+    <div
+      className={styles.container}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="auth-modal-title"
+      onClick={(e) => {
+        if (e.target === e.currentTarget && onClose && !loading) {
+          onClose();
+        }
+      }}
+    >
       <div className={styles.card}>
         {onClose && (
-          <button 
-            className={styles.closeBtn} 
+          <button
+            className={styles.closeBtn}
             onClick={onClose}
             aria-label="Close authentication modal"
+            disabled={loading}
           >
             ✕
           </button>
@@ -37,15 +61,19 @@ export default function AuthPage({ onClose }) {
 
         <div className={styles.header}>
           <div className={styles.logo}>
-            <span className={styles.logoIcon}>⯎</span>
-            <h1 className={styles.title}>POKÉDEX</h1>
+            <span className={styles.logoIcon} aria-hidden="true">⯎</span>
+            <h2 className={styles.title} id="auth-modal-title">POKÉDEX</h2>
           </div>
           <p className={styles.subtitle}>
-            Sign in with Google to sync your trainer experience
+            Sign in with Google to sync your trainer experience across devices
           </p>
         </div>
 
-        {error && <div className={styles.error}>{error}</div>}
+        {error && (
+          <div className={styles.error} role="alert">
+            {error}
+          </div>
+        )}
 
         <div className={styles.form}>
           <button
@@ -53,8 +81,9 @@ export default function AuthPage({ onClose }) {
             disabled={loading}
             onClick={handleGoogleLogin}
             className={styles.googleBtn}
+            aria-busy={loading}
           >
-            <svg className={styles.googleIcon} viewBox="0 0 24 24">
+            <svg className={styles.googleIcon} viewBox="0 0 24 24" aria-hidden="true">
               <path
                 fill="#4285F4"
                 d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -72,12 +101,13 @@ export default function AuthPage({ onClose }) {
                 d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
               />
             </svg>
-            {loading ? 'Connecting to Google...' : 'Sign in with Google'}
+            <span>{loading ? 'Connecting to Google...' : 'Sign in with Google'}</span>
           </button>
 
           {onClose && (
             <button
               type="button"
+              disabled={loading}
               onClick={onClose}
               className={styles.guestBtn}
             >
@@ -87,10 +117,9 @@ export default function AuthPage({ onClose }) {
         </div>
 
         <div className={styles.footer}>
-          <span>Authentication via official Google OAuth.</span>
+          <span>Authentication via Google Firebase OAuth.</span>
         </div>
       </div>
     </div>
   );
 }
-

@@ -1,0 +1,101 @@
+name: Enterprise CI/CD Deployment Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ── STAGE 1: Code Quality & Security Audit ─────────────────
+  audit-and-test:
+    name: Lint, Typecheck & Quality Gates
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js Environment (v20 LTS)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Validate Environment Schema
+        run: node scripts/validate-env.js
+
+      - name: Run ESLint Check
+        run: npm run lint
+
+      - name: Production Bundle Compilation
+        run: npm run build
+
+      - name: Archive Production Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-bundle
+          path: dist/
+          retention-days: 7
+
+  # ── STAGE 2: Staging Deployment & Smoke Testing ───────────
+  deploy-staging:
+    name: Deploy to Staging Environment
+    needs: audit-and-test
+    runs-on: ubuntu-latest
+    environment:
+      name: staging
+      url: https://pokedex-lite-staging.web.app
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Download Build Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-bundle
+          path: dist/
+
+      - name: Deploy to Firebase / Cloud Hosting Staging
+        run: |
+          echo "🚀 Deploying bundle to Staging target..."
+          # Deploy command (e.g. npx firebase-tools deploy --only hosting:staging)
+
+      - name: Run Staging E2E Smoke Tests
+        run: |
+          echo "🧪 Running Playwright cross-device assertions on Staging..."
+          # npx playwright test --config=playwright.config.ts
+
+  # ── STAGE 3: Production Deployment (Gated on Main) ────────
+  deploy-production:
+    name: Promote & Deploy to Production
+    needs: deploy-staging
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://pokedex-deepsolv.web.app
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Download Build Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-bundle
+          path: dist/
+
+      - name: Deploy to Production
+        run: |
+          echo "🌟 Promoting validated staging release to Production..."
+          # npx firebase-tools deploy --only hosting

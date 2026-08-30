@@ -1,40 +1,51 @@
-import { allTypes, getTypeColor } from '../utils/typeColors';
+import { memo } from 'react';
+import { TYPE_COLORS, getTypeColor } from '../utils/typeColors';
 import styles from './TypeFilter.module.css';
 
-export default function TypeFilter({ selectedType, onSelectType }) {
+const TYPES = Object.keys(TYPE_COLORS);
+
+const TypeFilter = memo(function TypeFilter({ selectedType, onSelectType }) {
   return (
-    <div className={styles.wrapper}>
-      <div className={styles.scrollContainer}>
+    <nav className={styles.container} aria-label="Filter by elemental type">
+      <div className={styles.scrollWrap} role="toolbar">
         <button
-          className={`${styles.pill} ${!selectedType ? styles.active : ''}`}
+          className={`${styles.typeBtn} ${!selectedType ? styles.active : ''}`}
           onClick={() => onSelectType(null)}
+          aria-pressed={!selectedType}
           id="type-filter-all"
-          style={!selectedType ? {
-            '--pill-color': 'var(--neon-red)',
-            '--pill-glow': 'rgba(255, 56, 96, 0.4)',
-          } : undefined}
         >
-          ALL
+          <span className={styles.typeIcon} aria-hidden="true">✦</span>
+          ALL TYPES
         </button>
-        {allTypes.map(type => {
-          const typeColor = getTypeColor(type);
-          const isActive = selectedType === type;
+
+        {TYPES.map((type) => {
+          const tc = getTypeColor(type);
+          const isSelected = selectedType === type;
+
           return (
             <button
               key={type}
-              className={`${styles.pill} ${isActive ? styles.active : ''}`}
-              onClick={() => onSelectType(isActive ? null : type)}
-              id={`type-filter-${type}`}
+              className={`${styles.typeBtn} ${isSelected ? styles.active : ''}`}
               style={{
-                '--pill-color': typeColor.color,
-                '--pill-glow': typeColor.glow,
+                '--type-color': tc.color,
+                '--type-glow': tc.glow,
               }}
+              onClick={() => onSelectType(isSelected ? null : type)}
+              aria-pressed={isSelected}
+              id={`type-filter-${type}`}
             >
+              <span
+                className={styles.typeDot}
+                style={{ background: tc.color }}
+                aria-hidden="true"
+              />
               {type.toUpperCase()}
             </button>
           );
         })}
       </div>
-    </div>
+    </nav>
   );
-}
+});
+
+export default TypeFilter;

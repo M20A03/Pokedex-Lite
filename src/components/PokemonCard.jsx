@@ -5,7 +5,7 @@ import styles from './PokemonCard.module.css';
 
 const PokemonCard = memo(function PokemonCard({ pokemon, index, onClick }) {
   const { isFavorite, toggleFavorite, isCaught, toggleCaught } = useFavorites();
-  const primaryType = pokemon.types[0]?.type?.name || 'normal';
+  const primaryType = pokemon.types?.[0]?.type?.name || 'normal';
   const typeColor = getTypeColor(primaryType);
   const isFav = isFavorite(pokemon.id);
   const caught = isCaught(pokemon.id);
@@ -32,63 +32,68 @@ const PokemonCard = memo(function PokemonCard({ pokemon, index, onClick }) {
       style={{
         '--type-color': typeColor.color,
         '--type-glow': typeColor.glow,
-        '--delay': `${index * 60}ms`,
+        '--delay': `${Math.min(index, 20) * 40}ms`,
         background: typeColor.gradient,
       }}
       onClick={() => onClick(pokemon.id)}
       id={`pokemon-card-${pokemon.id}`}
       role="button"
       tabIndex={0}
-      onKeyDown={(e) => e.key === 'Enter' && onClick(pokemon.id)}
+      onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onClick(pokemon.id)}
+      aria-label={`View details for ${pokemon.name}, Pokémon number ${pokemon.id}`}
     >
-      {/* Caught overlay */}
+      {/* Caught Overlay Badge */}
       {caught && (
-        <div className={styles.caughtOverlay} title="Caught!">
-          <span className={styles.caughtBall}>●</span>
+        <div className={styles.caughtOverlay} title="Pokémon Captured" aria-label="Captured">
+          <span className={styles.caughtBall} aria-hidden="true">●</span>
         </div>
       )}
 
-      {/* Action buttons */}
+      {/* Action Buttons with 44px Touch Targets */}
       <div className={styles.actions}>
         <button
           className={`${styles.catchBtn} ${caught ? styles.caught : ''}`}
           onClick={handleCatch}
-          title={caught ? 'Release' : 'Catch!'}
-          aria-label={caught ? 'Release' : 'Catch'}
+          title={caught ? 'Release Pokémon' : 'Capture Pokémon'}
+          aria-label={caught ? `Release ${pokemon.name}` : `Catch ${pokemon.name}`}
+          type="button"
         >
-          ●
+          <span className={styles.actionIcon} aria-hidden="true">●</span>
         </button>
         <button
           className={`${styles.favBtn} ${isFav ? styles.favorited : ''}`}
           onClick={handleFavorite}
           title={isFav ? 'Remove from favorites' : 'Add to favorites'}
-          aria-label={isFav ? 'Remove from favorites' : 'Add to favorites'}
+          aria-label={isFav ? `Remove ${pokemon.name} from favorites` : `Add ${pokemon.name} to favorites`}
+          type="button"
         >
-          {isFav ? '♥' : '♡'}
+          <span className={styles.actionIcon} aria-hidden="true">{isFav ? '♥' : '♡'}</span>
         </button>
       </div>
 
-      {/* Pokemon ID */}
+      {/* Pokemon Numerical Index */}
       <span className={styles.pokeId}>
         #{String(pokemon.id).padStart(3, '0')}
       </span>
 
-      {/* Sprite */}
+      {/* Artwork Sprite with explicit width/height to eliminate CLS */}
       <div className={styles.spriteWrap}>
         <img
           src={spriteUrl}
-          alt={pokemon.name}
+          alt={`${pokemon.name} official artwork`}
           className={styles.sprite}
           loading="lazy"
+          width="120"
+          height="120"
         />
       </div>
 
       {/* Name */}
       <h3 className={styles.name}>{pokemon.name}</h3>
 
-      {/* Type badges */}
-      <div className={styles.types}>
-        {pokemon.types.map(t => {
+      {/* Elemental Type Badges */}
+      <div className={styles.types} aria-label="Elemental types">
+        {pokemon.types?.map((t) => {
           const tc = getTypeColor(t.type.name);
           return (
             <span

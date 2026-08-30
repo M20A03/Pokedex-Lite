@@ -1,27 +1,32 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { fetchWithRetry } from '../lib/fetcher';
 
 const BASE_URL = 'https://pokeapi.co/api/v2';
 const ITEMS_PER_PAGE = 20;
 
-// Global cache shared across hook instances
-const pokemonCache = new Map();
-const typeCache = new Map();
 let masterListCache = null;
 
 async function getMasterList(signal) {
   if (masterListCache) return masterListCache;
-  const res = await fetch(`${BASE_URL}/pokemon?limit=1500`, { signal });
-  if (!res.ok) throw new Error('Failed to fetch Pokémon directory');
-  const data = await res.json();
-  masterListCache = data.results.map(item => {
+  const data = await fetchWithRetry(`${BASE_URL}/pokemon?limit=1500`, {
+    signal,
+    cacheKey: 'master_pokemon_directory',
+  });
+  masterListCache = data.results.map((item) => {
     const parts = item.url.split('/').filter(Boolean);
     const id = parts[parts.length - 1];
-    return { ...item, id };
+    return { ...item, id: String(id) };
   });
   return masterListCache;
 }
 
-export function usePokemon({ page = 1, searchQuery = '', selectedType = null, showFavorites = false, favorites = [] }) {
+export function usePokemon({
+  page = 1,
+  searchQuery = '',
+  selectedType = null,
+  showFavorites = false,
+  favorites = [],
+}) {
   const [pokemon, setPokemon] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -29,14 +34,7 @@ export function usePokemon({ page = 1, searchQuery = '', selectedType = null, sh
   const abortRef = useRef(null);
 
   const fetchPokemonDetail = useCallback(async (url, signal) => {
-    if (pokemonCache.has(url)) {
-      return pokemonCache.get(url);
-    }
-    const response = await fetch(url, { signal });
-    if (!response.ok) throw new Error(`Failed to fetch ${url}`);
-    const data = await response.json();
-    pokemonCache.set(url, data);
-    return data;
+    return fetchWithRetry(url, { signal, cacheKey: `detail_${url}` });
   }, []);
 
   useEffect(() => {
@@ -52,16 +50,16 @@ export function usePokemon({ page = 1, searchQuery = '', selectedType = null, sh
       setError(null);
 
       try {
-        // FAVORITES VIEW
+        // ── FAVORITES VIEW ─────────────────────────────────
         if (showFavorites) {
-          if (favorites.length === 0) {
+          if (!favorites || favorites.length === 0) {
             setPokemon([]);
             setTotalCount(0);
             setLoading(false);
             return;
           }
           const details = await Promise.all(
-            favorites.map(id =>
+            favorites.map((id) =>
               fetchPokemonDetail(`${BASE_URL}/pokemon/${id}`, controller.signal)
             )
           );
@@ -71,13 +69,13 @@ export function usePokemon({ page = 1, searchQuery = '', selectedType = null, sh
           return;
         }
 
-        // SEARCH MODE
+        // ── SEARCH MODE ────────────────────────────────────
         if (searchQuery.trim()) {
           const query = searchQuery.trim().toLowerCase();
           const masterList = await getMasterList(controller.signal);
 
           const matches = masterList.filter(
-            p => p.name.toLowerCase().includes(query) || p.id === query
+            (p) => p.name.toLowerCase().includes(query) || p.id === query
           );
 
           if (matches.length === 0) {
@@ -92,7 +90,7 @@ export function usePokemon({ page = 1, searchQuery = '', selectedType = null, sh
           const pageSlice = matches.slice(offset, offset + ITEMS_PER_PAGE);
 
           const details = await Promise.all(
-            pageSlice.map(p => fetchPokemonDetail(p.url, controller.signal))
+            pageSlice.map((p) => fetchPokemonDetail(p.url, controller.signal))
           );
 
           setPokemon(details);
@@ -101,26 +99,20 @@ export function usePokemon({ page = 1, searchQuery = '', selectedType = null, sh
           return;
         }
 
-        // TYPE FILTER MODE
+        // ── TYPE FILTER MODE ───────────────────────────────
         if (selectedType) {
-          const cacheKey = `type-${selectedType}`;
-          let typeData;
-          if (typeCache.has(cacheKey)) {
-            typeData = typeCache.get(cacheKey);
-          } else {
-            const res = await fetch(`${BASE_URL}/type/${selectedType}`, { signal: controller.signal });
-            if (!res.ok) throw new Error('Failed to fetch type data');
-            typeData = await res.json();
-            typeCache.set(cacheKey, typeData);
-          }
-          
-          const allPokemonOfType = typeData.pokemon.map(p => p.pokemon);
+          const typeData = await fetchWithRetry(`${BASE_URL}/type/${selectedType}`, {
+            signal: controller.signal,
+            cacheKey: `type_filter_${selectedType}`,
+          });
+
+          const allPokemonOfType = typeData.pokemon.map((p) => p.pokemon);
           const totalOfType = allPokemonOfType.length;
           const offset = (page - 1) * ITEMS_PER_PAGE;
           const pageSlice = allPokemonOfType.slice(offset, offset + ITEMS_PER_PAGE);
 
           const details = await Promise.all(
-            pageSlice.map(p => fetchPokemonDetail(p.url, controller.signal))
+            pageSlice.map((p) => fetchPokemonDetail(p.url, controller.signal))
           );
 
           setPokemon(details);
@@ -129,17 +121,15 @@ export function usePokemon({ page = 1, searchQuery = '', selectedType = null, sh
           return;
         }
 
-        // DEFAULT PAGINATED LIST
+        // ── DEFAULT PAGINATED LIST ─────────────────────────
         const offset = (page - 1) * ITEMS_PER_PAGE;
-        const listRes = await fetch(
+        const listData = await fetchWithRetry(
           `${BASE_URL}/pokemon?limit=${ITEMS_PER_PAGE}&offset=${offset}`,
-          { signal: controller.signal }
+          { signal: controller.signal, cacheKey: `list_p${page}_o${offset}` }
         );
-        if (!listRes.ok) throw new Error('Failed to fetch Pokémon list');
-        const listData = await listRes.json();
 
         const details = await Promise.all(
-          listData.results.map(p => fetchPokemonDetail(p.url, controller.signal))
+          listData.results.map((p) => fetchPokemonDetail(p.url, controller.signal))
         );
 
         setPokemon(details);
@@ -147,7 +137,7 @@ export function usePokemon({ page = 1, searchQuery = '', selectedType = null, sh
         setLoading(false);
       } catch (err) {
         if (err.name !== 'AbortError') {
-          setError(err.message || 'Something went wrong');
+          setError(err.message || 'Failed to retrieve Pokémon data.');
           setLoading(false);
         }
       }
@@ -170,3 +160,4 @@ export function usePokemon({ page = 1, searchQuery = '', selectedType = null, sh
   };
 }
 
+export default usePokemon;

@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { usePokemonDetail } from '../hooks/usePokemonDetail';
 import { useFavorites } from '../context/FavoritesContext';
 import { getTypeColor } from '../utils/typeColors';
+import { useKeyboardShortcut } from '../hooks/useKeyboardShortcut';
 import Spinner from './Spinner';
 import styles from './PokemonModal.module.css';
 
@@ -17,33 +18,39 @@ const STAT_LABELS = {
 const MAX_STAT = 255;
 
 function getStatColor(value) {
-  if (value >= 150) return '#00ff88';
-  if (value >= 100) return '#00d4ff';
-  if (value >= 70) return '#ffd900';
+  if (value >= 150) return 'var(--color-brand-green, #00ff88)';
+  if (value >= 100) return 'var(--color-brand-secondary, #00d4ff)';
+  if (value >= 70) return 'var(--color-brand-accent, #ffd900)';
   if (value >= 40) return '#f08030';
-  return '#ff3860';
+  return 'var(--color-brand-primary, #ff3860)';
 }
 
 export default function PokemonModal({ pokemonId, onClose }) {
   const { detail, flavorText, genus, loading } = usePokemonDetail(pokemonId);
   const { isFavorite, toggleFavorite, isCaught, toggleCaught } = useFavorites();
   const overlayRef = useRef(null);
+  const closeBtnRef = useRef(null);
 
-  // ESC key handler
+  // Global Escape key handler
+  useKeyboardShortcut('Escape', () => {
+    onClose();
+  }, { ignoreInputs: false });
+
+  // Body scroll lock & focus trap
   useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 'Escape') onClose();
-    };
-    document.addEventListener('keydown', handleKeyDown);
+    const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
+    closeBtnRef.current?.focus();
+
     return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = '';
+      document.body.style.overflow = originalOverflow;
     };
-  }, [onClose]);
+  }, []);
 
   const handleOverlayClick = (e) => {
-    if (e.target === overlayRef.current) onClose();
+    if (e.target === overlayRef.current) {
+      onClose();
+    }
   };
 
   if (!pokemonId) return null;
@@ -63,13 +70,26 @@ export default function PokemonModal({ pokemonId, onClose }) {
       ref={overlayRef}
       onClick={handleOverlayClick}
       id="pokemon-modal-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-pokemon-name"
     >
       <div
         className={styles.modal}
-        style={{ '--modal-type-color': typeColor.color, '--modal-type-glow': typeColor.glow }}
+        style={{
+          '--modal-type-color': typeColor.color,
+          '--modal-type-glow': typeColor.glow,
+        }}
       >
-        {/* Close button */}
-        <button className={styles.closeBtn} onClick={onClose} id="modal-close" aria-label="Close">
+        {/* Close Button with 44px Hit Target */}
+        <button
+          ref={closeBtnRef}
+          className={styles.closeBtn}
+          onClick={onClose}
+          id="modal-close-btn"
+          aria-label="Close modal dialog"
+          title="Close (ESC)"
+        >
           ✕
         </button>
 
@@ -79,14 +99,19 @@ export default function PokemonModal({ pokemonId, onClose }) {
           </div>
         ) : (
           <div className={styles.content}>
-            {/* LEFT PANEL — Artwork */}
+            {/* LEFT / HERO PANEL */}
             <div className={styles.artworkPanel}>
-              <div className={styles.artworkBg} style={{ background: typeColor.gradient }}>
+              <div
+                className={styles.artworkBg}
+                style={{ background: typeColor.gradient }}
+              >
                 {spriteUrl && (
                   <img
                     src={spriteUrl}
-                    alt={detail.name}
+                    alt={`${detail.name} official full artwork`}
                     className={styles.artwork}
+                    width="260"
+                    height="260"
                   />
                 )}
               </div>
@@ -95,36 +120,46 @@ export default function PokemonModal({ pokemonId, onClose }) {
                 #{String(detail.id).padStart(3, '0')}
               </div>
 
+              {/* Action Buttons */}
               <div className={styles.modalActions}>
                 <button
+                  type="button"
                   className={`${styles.actionBtn} ${isFavorite(detail.id) ? styles.favActive : ''}`}
                   onClick={() => toggleFavorite(detail.id)}
+                  aria-label={isFavorite(detail.id) ? 'Remove favorite' : 'Add favorite'}
                 >
-                  {isFavorite(detail.id) ? '♥' : '♡'} {isFavorite(detail.id) ? 'Favorited' : 'Favorite'}
+                  <span aria-hidden="true">{isFavorite(detail.id) ? '♥' : '♡'}</span>
+                  <span>{isFavorite(detail.id) ? 'Favorited' : 'Favorite'}</span>
                 </button>
                 <button
+                  type="button"
                   className={`${styles.actionBtn} ${isCaught(detail.id) ? styles.caughtActive : ''}`}
                   onClick={() => toggleCaught(detail.id)}
+                  aria-label={isCaught(detail.id) ? 'Release Pokémon' : 'Catch Pokémon'}
                 >
-                  ● {isCaught(detail.id) ? 'Caught' : 'Catch'}
+                  <span aria-hidden="true">●</span>
+                  <span>{isCaught(detail.id) ? 'Captured' : 'Catch'}</span>
                 </button>
               </div>
             </div>
 
-            {/* RIGHT PANEL — Details */}
+            {/* RIGHT / STATS & DATA PANEL */}
             <div className={styles.detailsPanel}>
-              <h2 className={styles.pokeName}>{detail.name}</h2>
+              <h2 className={styles.pokeName} id="modal-pokemon-name">{detail.name}</h2>
               {genus && <span className={styles.genus}>{genus}</span>}
 
-              {/* Type badges */}
-              <div className={styles.typeBadges}>
-                {detail.types.map(t => {
+              {/* Elemental Type Badges */}
+              <div className={styles.typeBadges} aria-label="Types">
+                {detail.types?.map((t) => {
                   const tc = getTypeColor(t.type.name);
                   return (
                     <span
                       key={t.type.name}
-                      className={styles.typeBadge}
-                      style={{ '--badge-color': tc.color, '--badge-glow': tc.glow }}
+                      className={styles.modalTypeBadge}
+                      style={{
+                        '--badge-color': tc.color,
+                        '--badge-glow': tc.glow,
+                      }}
                     >
                       {t.type.name}
                     </span>
@@ -132,75 +167,56 @@ export default function PokemonModal({ pokemonId, onClose }) {
                 })}
               </div>
 
-              {/* Physical stats */}
-              <div className={styles.physicalStats}>
-                <div className={styles.physStat}>
-                  <span className={styles.physLabel}>Height</span>
-                  <span className={styles.physValue}>{(detail.height / 10).toFixed(1)} m</span>
+              {/* Flavor Text / Pokédex Entry */}
+              {flavorText && (
+                <div className={styles.flavorBox}>
+                  <p className={styles.flavorText}>&ldquo;{flavorText}&rdquo;</p>
                 </div>
-                <div className={styles.physDivider} />
-                <div className={styles.physStat}>
-                  <span className={styles.physLabel}>Weight</span>
-                  <span className={styles.physValue}>{(detail.weight / 10).toFixed(1)} kg</span>
+              )}
+
+              {/* Physical Metrics */}
+              <div className={styles.metricsGrid}>
+                <div className={styles.metricCard}>
+                  <span className={styles.metricLabel}>HEIGHT</span>
+                  <span className={styles.metricVal}>{(detail.height / 10).toFixed(1)} m</span>
                 </div>
-                <div className={styles.physDivider} />
-                <div className={styles.physStat}>
-                  <span className={styles.physLabel}>Base XP</span>
-                  <span className={styles.physValue}>{detail.base_experience || '—'}</span>
+                <div className={styles.metricCard}>
+                  <span className={styles.metricLabel}>WEIGHT</span>
+                  <span className={styles.metricVal}>{(detail.weight / 10).toFixed(1)} kg</span>
+                </div>
+                <div className={styles.metricCard}>
+                  <span className={styles.metricLabel}>BASE EXP</span>
+                  <span className={styles.metricVal}>{detail.base_experience || '—'}</span>
                 </div>
               </div>
 
-              {/* Flavor text */}
-              {flavorText && (
-                <p className={styles.flavorText}>&quot;{flavorText}&quot;</p>
-              )}
-
-              {/* Base Stats */}
+              {/* Base Combat Statistics */}
               <div className={styles.statsSection}>
-                <h4 className={styles.sectionTitle}>BASE STATS</h4>
-                <div className={styles.statsGrid}>
-                  {detail.stats.map(stat => {
-                    const percentage = Math.min((stat.base_stat / MAX_STAT) * 100, 100);
-                    const statColor = getStatColor(stat.base_stat);
-                    const label = STAT_LABELS[stat.stat.name] || stat.stat.name.toUpperCase();
+                <h3 className={styles.statsTitle}>BASE COMBAT METRICS</h3>
+                <div className={styles.statList}>
+                  {detail.stats?.map((s) => {
+                    const label = STAT_LABELS[s.stat.name] || s.stat.name.toUpperCase();
+                    const value = s.base_stat;
+                    const percent = Math.min(100, Math.round((value / MAX_STAT) * 100));
+                    const barColor = getStatColor(value);
+
                     return (
-                      <div key={stat.stat.name} className={styles.statRow}>
+                      <div key={s.stat.name} className={styles.statRow}>
                         <span className={styles.statLabel}>{label}</span>
-                        <div className={styles.statBarTrack}>
+                        <span className={styles.statValue}>{value}</span>
+                        <div className={styles.statTrack}>
                           <div
-                            className={styles.statBarFill}
+                            className={styles.statFill}
                             style={{
-                              '--fill-width': `${percentage}%`,
-                              '--stat-color': statColor,
+                              width: `${percent}%`,
+                              background: barColor,
+                              boxShadow: `0 0 8px ${barColor}`,
                             }}
                           />
                         </div>
-                        <span className={styles.statValue}>{stat.base_stat}</span>
                       </div>
                     );
                   })}
-                </div>
-                <div className={styles.totalStat}>
-                  <span className={styles.statLabel}>TOTAL</span>
-                  <span className={styles.statValue}>
-                    {detail.stats.reduce((sum, s) => sum + s.base_stat, 0)}
-                  </span>
-                </div>
-              </div>
-
-              {/* Abilities */}
-              <div className={styles.abilitiesSection}>
-                <h4 className={styles.sectionTitle}>ABILITIES</h4>
-                <div className={styles.abilitiesList}>
-                  {detail.abilities.map(a => (
-                    <span
-                      key={a.ability.name}
-                      className={`${styles.abilityChip} ${a.is_hidden ? styles.hiddenAbility : ''}`}
-                    >
-                      {a.ability.name.replace('-', ' ')}
-                      {a.is_hidden && <span className={styles.hiddenTag}>Hidden</span>}
-                    </span>
-                  ))}
                 </div>
               </div>
             </div>

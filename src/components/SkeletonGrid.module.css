@@ -1,0 +1,106 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(14px, 2vw, 22px);
+  max-width: var(--container-xl, 1280px);
+  margin: 0 auto;
+  padding: 0 clamp(12px, 3vw, 28px);
+  width: 100%;
+}
+
+@media (min-width: 1920px) {
+  .grid {
+    grid-template-columns: repeat(5, 1fr);
+    max-width: var(--container-2xl, 1536px);
+  }
+}
+
+@media (max-width: 1200px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+}
+
+@media (max-width: 380px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+}
+
+.skeletonCard {
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(10, 16, 32, 0.5);
+  backdrop-filter: blur(15px);
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  min-height: 220px;
+  position: relative;
+  overflow: hidden;
+}
+
+.skeletonCard::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.06) 50%,
+    transparent 100%
+  );
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.skeletonId {
+  width: 36px;
+  height: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  align-self: flex-start;
+}
+
+.skeletonSprite {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  margin: 6px 0;
+}
+
+.skeletonName {
+  width: 80px;
+  height: 16px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+}
+
+.skeletonTypes {
+  display: flex;
+  gap: 6px;
+}
+
+.skeletonBadge {
+  width: 50px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+}

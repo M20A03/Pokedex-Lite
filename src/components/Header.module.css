@@ -2,213 +2,274 @@
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(8, 16, 36, 0.75);
-  backdrop-filter: blur(30px) saturate(1.5);
-  -webkit-backdrop-filter: blur(30px) saturate(1.5);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
-  /* safe area for notched phones */
+  background: var(--header-bg, rgba(8, 16, 36, 0.85));
+  backdrop-filter: blur(25px) saturate(1.4);
+  -webkit-backdrop-filter: blur(25px) saturate(1.4);
+  border-bottom: 1px solid var(--glass-border, rgba(255, 255, 255, 0.12));
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.35);
   padding-left: env(safe-area-inset-left, 0px);
   padding-right: env(safe-area-inset-right, 0px);
+  transition: background-color var(--duration-normal) ease;
 }
 
 .inner {
-  max-width: 1400px;
+  max-width: var(--container-xl, 1280px);
   margin: 0 auto;
-  padding: 0 clamp(14px, 3vw, 32px);
-  height: var(--header-height);
+  padding: 0 clamp(12px, 3vw, 24px);
+  height: var(--header-height, 70px);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: clamp(8px, 2vw, 20px);
+  gap: clamp(8px, 2vw, 16px);
+}
+
+@media (min-width: 1920px) {
+  .inner {
+    max-width: var(--container-2xl, 1536px);
+  }
 }
 
 /* ── Logo ──────────────────────────────── */
 .logo {
   display: flex;
   align-items: center;
-  gap: clamp(8px, 1.5vw, 12px);
+  gap: 8px;
   flex-shrink: 0;
+  cursor: pointer;
+  min-height: 44px;
+  border-radius: 8px;
 }
 
 .logoIcon {
-  font-size: clamp(1.2rem, 2vw, 1.6rem);
-  color: var(--neon-red);
+  font-size: clamp(1.1rem, 2vw, 1.5rem);
+  color: var(--color-brand-primary, #ff3860);
   animation: glowPulse 3s ease-in-out infinite;
-  display: flex;
-  align-items: center;
 }
 
 .logoText {
-  font-family: var(--font-display);
-  font-size: clamp(1rem, 2vw, 1.5rem);
+  font-family: var(--font-display, sans-serif);
+  font-size: clamp(0.95rem, 1.8vw, 1.35rem);
   font-weight: 800;
-  letter-spacing: 0.1em;
-  color: #fff;
+  letter-spacing: 0.08em;
+  color: var(--text-primary, #fff);
   white-space: nowrap;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 255, 255, 0.1);
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
 .logoHighlight {
-  color: var(--neon-red);
-  text-shadow: 0 0 14px rgba(255, 56, 96, 0.8), 0 0 40px rgba(255, 56, 96, 0.4), 0 2px 8px rgba(0, 0, 0, 0.5);
+  color: var(--color-brand-primary, #ff3860);
+  text-shadow: 0 0 14px rgba(255, 56, 96, 0.8);
 }
 
 /* ── Navigation ───────────────────────── */
 .nav {
   display: flex;
   align-items: center;
-  gap: clamp(4px, 1vw, 8px);
+  gap: clamp(4px, 1vw, 10px);
 }
 
-.navBtn {
-  font-family: var(--font-display);
-  font-size: clamp(0.7rem, 1vw, 0.9rem);
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  padding: clamp(8px, 1.2vw, 12px) clamp(14px, 2vw, 24px);
-  border-radius: 12px;
-  color: rgba(255, 255, 255, 0.9);
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  transition: all var(--transition-normal);
-  position: relative;
+/* ── Quick Command Search Trigger ─────── */
+.searchTriggerBtn {
   display: flex;
   align-items: center;
   gap: 8px;
-  white-space: nowrap;
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+  padding: 6px 12px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--text-muted, rgba(255, 255, 255, 0.7));
+  font-size: 0.82rem;
+  min-height: 44px;
+  transition: all var(--duration-fast) ease;
 }
 
-.navBtn:hover {
-  color: #fff;
-  background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 255, 255, 0.3);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+@media (hover: hover) and (pointer: fine) {
+  .searchTriggerBtn:hover {
+    background: rgba(255, 255, 255, 0.14);
+    border-color: var(--color-brand-secondary, #00d4ff);
+    color: #fff;
+  }
+}
+
+.searchIcon {
+  font-size: 0.9rem;
+}
+
+.kbdShortcut {
+  font-family: var(--font-display, sans-serif);
+  font-size: 0.65rem;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: var(--color-brand-secondary, #00d4ff);
+}
+
+/* ── Navigation Buttons ───────────────── */
+.navBtn {
+  font-family: var(--font-display, sans-serif);
+  font-size: clamp(0.72rem, 1vw, 0.85rem);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 8px clamp(10px, 1.5vw, 18px);
+  border-radius: 10px;
+  color: var(--text-secondary, rgba(255, 255, 255, 0.85));
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  transition: all var(--duration-normal) var(--ease-in-out-smooth);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  min-height: 44px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .navBtn:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.14);
+    border-color: rgba(255, 255, 255, 0.28);
+    transform: translateY(-1px);
+  }
 }
 
 .navBtn.active {
   color: #fff;
-  background: rgba(255, 56, 96, 0.3);
-  border-color: rgba(255, 56, 96, 0.6);
-  box-shadow: 0 0 20px rgba(255, 56, 96, 0.25), inset 0 0 15px rgba(255, 56, 96, 0.1);
+  background: rgba(var(--color-brand-primary-rgb), 0.28);
+  border-color: rgba(var(--color-brand-primary-rgb), 0.65);
+  box-shadow: 0 0 16px rgba(var(--color-brand-primary-rgb), 0.3);
 }
 
 .navIcon {
-  font-size: 1.1rem;
+  font-size: 1rem;
 }
 
 .heartIcon {
-  font-size: 1.1rem;
-  color: var(--neon-red);
-  filter: drop-shadow(0 0 5px rgba(255, 56, 96, 0.6));
+  font-size: 1rem;
+  color: var(--color-brand-primary, #ff3860);
+  filter: drop-shadow(0 0 4px rgba(255, 56, 96, 0.6));
 }
 
 .badge {
-  font-family: var(--font-display);
+  font-family: var(--font-display, sans-serif);
   font-size: 0.65rem;
   font-weight: 700;
-  background: var(--neon-red);
+  background: var(--color-brand-primary, #ff3860);
   color: #fff;
-  padding: 3px 8px;
-  border-radius: 12px;
-  min-width: 20px;
+  padding: 2px 7px;
+  border-radius: 10px;
+  min-width: 18px;
   text-align: center;
-  line-height: 1.4;
-  box-shadow: 0 0 12px rgba(255, 56, 96, 0.5);
+  box-shadow: 0 0 10px rgba(255, 56, 96, 0.5);
 }
 
 /* ── Stats group ──────────────────────── */
 .statsGroup {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-left: 8px;
-  padding-left: 16px;
-  border-left: 1px solid rgba(255, 255, 255, 0.15);
+  gap: 8px;
+  padding-left: 10px;
+  border-left: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .statChip {
-  font-family: var(--font-display);
+  font-family: var(--font-display, sans-serif);
   font-size: 0.75rem;
   font-weight: 700;
-  letter-spacing: 0.06em;
-  color: rgba(255, 255, 255, 0.85);
+  color: var(--text-secondary, rgba(255, 255, 255, 0.85));
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 8px 16px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.06);
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  min-height: 44px;
 }
 
 .pokeball {
-  color: var(--neon-red);
+  color: var(--color-brand-primary, #ff3860);
   font-size: 0.85rem;
-  filter: drop-shadow(0 0 4px rgba(255, 56, 96, 0.4));
+  filter: drop-shadow(0 0 4px rgba(255, 56, 96, 0.5));
 }
 
 /* ── Theme Toggle ─────────────────────── */
 .themeToggle {
-  font-size: 1.4rem;
+  font-size: 1.1rem;
   width: 44px;
   height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 12px;
-  transition: all var(--transition-normal);
-  color: rgba(255, 255, 255, 0.85);
+  border-radius: 10px;
+  transition: all var(--duration-normal) ease;
+  color: var(--text-primary, #fff);
   background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
-.themeToggle:hover {
-  color: var(--neon-yellow);
-  background: rgba(255, 217, 0, 0.12);
-  border-color: rgba(255, 217, 0, 0.3);
-  transform: rotate(15deg);
+@media (hover: hover) and (pointer: fine) {
+  .themeToggle:hover {
+    transform: rotate(15deg) scale(1.05);
+    background: rgba(255, 255, 255, 0.15);
+  }
 }
 
-/* ── Scanline sweep effect ────────────── */
-.scanline {
-  position: absolute;
-  top: -10%;
-  left: 0;
-  width: 100%;
-  height: 4px;
-  background: linear-gradient(90deg, transparent 0%, rgba(255, 56, 96, 0.6) 50%, transparent 100%);
-  opacity: 0.7;
-  animation: scanline 2s ease-out forwards;
-  pointer-events: none;
+/* ── User Profile & Auth ──────────────── */
+.userGroup {
+  display: flex;
+  align-items: center;
 }
 
-.googleLoginBtn {
-  font-family: var(--font-display);
-  font-size: clamp(0.7rem, 1vw, 0.85rem);
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  padding: clamp(6px, 1vw, 10px) clamp(10px, 1.5vw, 16px);
-  border-radius: 12px;
-  color: #fff;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  transition: all var(--transition-normal);
+.logoutBtn {
   display: flex;
   align-items: center;
   gap: 6px;
-  white-space: nowrap;
-  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #fff;
+  min-height: 44px;
+  transition: all 0.2s ease;
 }
 
-.googleLoginBtn:hover {
-  background: rgba(255, 255, 255, 0.18);
-  border-color: rgba(255, 255, 255, 0.35);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+.avatarImg {
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.userAvatarFallback {
+  font-size: 1rem;
+}
+
+.logoutIcon {
+  color: var(--color-brand-primary, #ff3860);
+  font-size: 0.95rem;
+}
+
+.googleLoginBtn {
+  font-family: var(--font-display, sans-serif);
+  font-size: clamp(0.7rem, 1vw, 0.82rem);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 6px 14px;
+  border-radius: 10px;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all var(--duration-fast) ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .googleLoginBtn:hover {
+    background: rgba(255, 255, 255, 0.18);
+    border-color: rgba(255, 255, 255, 0.35);
+  }
 }
 
 .googleIcon {
@@ -217,58 +278,53 @@
   flex-shrink: 0;
 }
 
-/* ── Responsive: Tablet ───────────────── */
-@media (max-width: 768px) {
-  .header {
-    --header-height: 58px;
-  }
+/* ── Scanline Effect ──────────────────── */
+.scanline {
+  position: absolute;
+  top: -10%;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, transparent 0%, rgba(var(--color-brand-primary-rgb), 0.6) 50%, transparent 100%);
+  opacity: 0.7;
+  animation: scanline 2s ease-out forwards;
+  pointer-events: none;
+}
 
-  .inner {
-    gap: 8px;
+/* ── Responsive Breakpoints ───────────── */
+@media (max-width: 860px) {
+  .searchTriggerText {
+    display: none;
   }
-
-  .statsGroup {
+  .kbdShortcut {
     display: none;
   }
 }
 
-/* ── Responsive: Mobile ───────────────── */
-@media (max-width: 480px) {
-  .header {
-    --header-height: 52px;
-  }
-
-  .inner {
-    padding: 0 10px;
-    gap: 4px;
-  }
-
-  .logoText {
-    font-size: 0.82rem;
-    letter-spacing: 0.04em;
-  }
-
-  .navBtn {
-    padding: 6px 8px;
-    gap: 3px;
-    font-size: 0.68rem;
-  }
-
-  .googleLoginBtn {
-    padding: 6px 8px;
-    font-size: 0.68rem;
-    gap: 4px;
-  }
-
-  .navIcon, .heartIcon {
+@media (max-width: 640px) {
+  .statsGroup {
     display: none;
   }
+  .inner {
+    padding: 0 10px;
+    height: 60px;
+  }
+}
 
-  .themeToggle {
-    width: 32px;
-    height: 32px;
-    font-size: 0.95rem;
-    flex-shrink: 0;
+@media (max-width: 480px) {
+  .logoText {
+    font-size: 0.85rem;
+  }
+  .searchTriggerBtn {
+    padding: 6px 8px;
+  }
+  .navBtn {
+    padding: 6px 10px;
+    font-size: 0.7rem;
+  }
+  .navIcon,
+  .heartIcon {
+    display: none;
   }
 }
 
@@ -276,10 +332,4 @@
   .logoText {
     display: none;
   }
-
-  .navBtn {
-    padding: 6px 6px;
-    font-size: 0.65rem;
-  }
 }
-

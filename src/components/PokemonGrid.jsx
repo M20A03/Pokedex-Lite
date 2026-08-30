@@ -2,12 +2,16 @@ import PokemonCard from './PokemonCard';
 import styles from './PokemonGrid.module.css';
 
 export default function PokemonGrid({ pokemon, onSelectPokemon }) {
-  if (pokemon.length === 0) {
+  if (!pokemon || pokemon.length === 0) {
     return null;
   }
 
   return (
-    <div className={styles.grid}>
+    <section
+      className={styles.grid}
+      aria-label="Pokémon Directory Grid"
+      role="feed"
+    >
       {pokemon.map((p, index) => (
         <PokemonCard
           key={p.id}
@@ -16,6 +20,6 @@ export default function PokemonGrid({ pokemon, onSelectPokemon }) {
           onClick={onSelectPokemon}
         />
       ))}
-    </div>
+    </section>
   );
 }

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
+import { fetchWithRetry } from '../lib/fetcher';
 
 const BASE_URL = 'https://pokeapi.co/api/v2';
-const speciesCache = new Map();
 
 export function usePokemonDetail(pokemonId) {
   const [detail, setDetail] = useState(null);
@@ -24,32 +24,32 @@ export function usePokemonDetail(pokemonId) {
 
       try {
         // Fetch pokemon detail
-        const pokemonRes = await fetch(`${BASE_URL}/pokemon/${pokemonId}`, {
+        const pokemonData = await fetchWithRetry(`${BASE_URL}/pokemon/${pokemonId}`, {
           signal: controller.signal,
+          cacheKey: `pokemon_modal_detail_${pokemonId}`,
         });
-        if (!pokemonRes.ok) throw new Error('Failed to fetch Pokémon detail');
-        const pokemonData = await pokemonRes.json();
         setDetail(pokemonData);
 
         // Fetch species data for flavor text
-        const speciesKey = `species-${pokemonId}`;
-        let speciesData;
-        if (speciesCache.has(speciesKey)) {
-          speciesData = speciesCache.get(speciesKey);
-        } else {
-          const speciesRes = await fetch(`${BASE_URL}/pokemon-species/${pokemonId}`, {
-            signal: controller.signal,
-          });
-          if (speciesRes.ok) {
-            speciesData = await speciesRes.json();
-            speciesCache.set(speciesKey, speciesData);
-          }
+        try {
+          const speciesData = await fetchWithRetry(
+            `${BASE_URL}/pokemon-species/${pokemonId}`,
+            {
+              signal: controller.signal,
+              cacheKey: `pokemon_species_${pokemonId}`,
+              silentError: true,
+            }
+          );
+          setSpecies(speciesData || null);
+        } catch {
+          // Species failure is non-fatal
+          setSpecies(null);
         }
-        setSpecies(speciesData || null);
+
         setLoading(false);
       } catch (err) {
         if (err.name !== 'AbortError') {
-          setError(err.message);
+          setError(err.message || 'Unable to load Pokémon specifications.');
           setLoading(false);
         }
       }
@@ -61,13 +61,13 @@ export function usePokemonDetail(pokemonId) {
   }, [pokemonId]);
 
   // Extract English flavor text
-  const flavorText = species?.flavor_text_entries
-    ?.find(entry => entry.language.name === 'en')
-    ?.flavor_text?.replace(/[\f\n\r]/g, ' ') || '';
+  const flavorText =
+    species?.flavor_text_entries
+      ?.find((entry) => entry.language.name === 'en')
+      ?.flavor_text?.replace(/[\f\n\r]/g, ' ') || '';
 
-  const genus = species?.genera
-    ?.find(g => g.language.name === 'en')
-    ?.genus || '';
+  const genus =
+    species?.genera?.find((g) => g.language.name === 'en')?.genus || '';
 
   return {
     detail,
@@ -78,3 +78,5 @@ export function usePokemonDetail(pokemonId) {
     error,
   };
 }
+
+export default usePokemonDetail;

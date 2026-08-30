@@ -2,20 +2,37 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="description" content="Pokédex Lite — A futuristic sci-fi Pokémon explorer powered by PokéAPI. Browse, search, and favorite all Pokémon with a stunning retro-terminal interface." />
+    <meta name="description" content="Pokédex Lite — Enterprise-grade futuristic Pokémon explorer powered by PokéAPI. Browse, search, and capture all Pokémon with zero-latency responsive controls." />
     <meta name="theme-color" content="#050810" />
     <title>Pokédex Lite — Futuristic Pokémon Explorer</title>
 
-    <!-- Preconnect to Google Fonts for faster loading -->
+    <!-- Zero-FOUC Inlined Theme Initializer -->
+    <script>
+      (function() {
+        try {
+          var stored = localStorage.getItem('pokedex-theme-preference');
+          var theme = stored || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+          document.documentElement.setAttribute('data-theme', theme);
+          var meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) {
+            meta.setAttribute('content', theme === 'light' ? '#f0f4f9' : theme === 'cyberpunk' ? '#020008' : '#050810');
+          }
+        } catch (e) {}
+      })();
+    </script>
+
+    <!-- Preconnect to Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800;900&family=Outfit:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
     <!-- Preconnect to PokéAPI sprites CDN -->
     <link rel="preconnect" href="https://raw.githubusercontent.com" />
+    <link rel="preconnect" href="https://pokeapi.co" />
 
     <!-- Favicon — Pokéball emoji as SVG -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔴</text></svg>" />

@@ -1,7 +1,7 @@
 // Type → color mapping for neon glow effects, badge backgrounds, and stat bars
 // Each type has a primary color, a glow shadow value, and a gradient background
 
-const typeColors = {
+export const TYPE_COLORS = {
   normal: {
     color: '#a8a878',
     glow: 'rgba(168, 168, 120, 0.5)',
@@ -94,10 +94,12 @@ const typeColors = {
   },
 };
 
+export const typeColors = TYPE_COLORS;
+
 export const getTypeColor = (type) => {
-  return typeColors[type?.toLowerCase()] || typeColors.normal;
+  return TYPE_COLORS[type?.toLowerCase()] || TYPE_COLORS.normal;
 };
 
-export const allTypes = Object.keys(typeColors);
+export const allTypes = Object.keys(TYPE_COLORS);
 
-export default typeColors;
+export default TYPE_COLORS;
