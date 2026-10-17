@@ -83,8 +83,13 @@ const PokemonCard = memo(function PokemonCard({ pokemon, index, onClick }) {
           alt={`${pokemon.name} official artwork`}
           className={styles.sprite}
           loading="lazy"
+          decoding="async"
           width="120"
           height="120"
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120"><circle cx="60" cy="60" r="50" fill="%23EF4444"/><path d="M10 60H110" stroke="%231E293B" stroke-width="8"/><circle cx="60" cy="60" r="16" fill="%23FFFFFF" stroke="%231E293B" stroke-width="6"/><circle cx="60" cy="60" r="6" fill="%231E293B"/></svg>';
+          }}
         />
       </div>
 
