@@ -1,15 +1,5 @@
 {
   "projects": {
     "default": "pokedex-deepsolv"
-  },
-  "targets": {
-    "react4-eb851": {
-      "hosting": {
-        "pokedex-lite": [
-          "pokedex-lite-deepsolv"
-        ]
-      }
-    }
-  },
-  "etags": {}
+  }
 }
